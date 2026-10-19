@@ -1,3 +1,4 @@
+// This is basically the logic of login/Signup form but i selected create account name
 import { User } from '../models/User.js';
 import { env } from '../config/env.js';
 import { signToken } from '../middleware/auth.js';
