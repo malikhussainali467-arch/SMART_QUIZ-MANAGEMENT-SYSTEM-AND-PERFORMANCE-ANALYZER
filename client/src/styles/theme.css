@@ -1,0 +1,91 @@
+/* ============================================================
+   Design tokens: change colours, fonts and radius here.
+   Light theme is the default; [data-theme='dark'] overrides it.
+   ============================================================ */
+:root {
+  --font-display: 'Bricolage Grotesque Variable', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'DM Sans Variable', 'Segoe UI', system-ui, sans-serif;
+
+  --brand: linear-gradient(135deg, #6d4aff 0%, #a64bf4 55%, #ff4fa3 100%);
+  --canvas: #f5f3ff;
+  --surface: #ffffff;
+  --surface-2: #faf9ff;
+  --line: #e7e3f7;
+  --ink: #17142b;
+  --ink-soft: #5f5b7d;
+  --ink-faint: #9b97b8;
+  --accent: #5b3ae6;
+  --accent-bg: #efebff;
+
+  --good: #0f9c73;
+  --good-bg: #e0f5ee;
+  --warn: #c27a06;
+  --warn-bg: #fdf0d6;
+  --bad: #de3f45;
+  --bad-bg: #fde8e8;
+
+  --radius: 16px;
+  --radius-sm: 10px;
+  --shadow: 0 1px 2px rgba(35, 20, 90, 0.05), 0 10px 28px rgba(35, 20, 90, 0.06);
+  --shadow-lift: 0 2px 4px rgba(35, 20, 90, 0.06), 0 16px 36px rgba(35, 20, 90, 0.12);
+  --ease: cubic-bezier(0.22, 0.8, 0.3, 1);
+}
+
+[data-theme='dark'] {
+  --canvas: #0e0c1d;
+  --surface: #18152c;
+  --surface-2: #1d1a34;
+  --line: #2c2850;
+  --ink: #f1efff;
+  --ink-soft: #a9a6cc;
+  --ink-faint: #6f6c95;
+  --accent: #a995ff;
+  --accent-bg: #26214b;
+  --good: #3dd6a5;
+  --good-bg: #123a30;
+  --warn: #f3b84a;
+  --warn-bg: #3b2e10;
+  --bad: #ff7378;
+  --bad-bg: #402026;
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 28px rgba(0, 0, 0, 0.25);
+  --shadow-lift: 0 2px 4px rgba(0, 0, 0, 0.35), 0 16px 36px rgba(0, 0, 0, 0.4);
+}
+
+/* ---------- Reset & base ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.3s, color 0.3s;
+}
+h1, h2, h3, h4 { font-family: var(--font-display); line-height: 1.15; margin: 0; letter-spacing: -0.015em; }
+h1 { font-size: clamp(1.7rem, 3vw, 2.3rem); font-weight: 700; }
+h2 { font-size: 1.3rem; font-weight: 650; }
+h3 { font-size: 1.05rem; font-weight: 650; }
+p { margin: 0; }
+a { color: var(--accent); text-decoration: none; }
+button { font: inherit; color: inherit; }
+img, svg { display: block; max-width: 100%; }
+:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent) 55%, transparent); outline-offset: 2px; }
+::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+
+.muted { color: var(--ink-soft); }
+.faint { color: var(--ink-faint); }
+.small { font-size: 0.86rem; }
+.row { display: flex; align-items: center; gap: 12px; }
+.row-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+.spread { justify-content: space-between; }
+.stack { display: grid; gap: 16px; }
+.grow { flex: 1; }
+.right { margin-left: auto; }
+.center { text-align: center; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+}

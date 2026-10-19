@@ -1,0 +1,60 @@
+/* ============================================================
+   App shell (sidebar + content) and the login/register screen
+   ============================================================ */
+.shell { display: grid; grid-template-columns: 256px minmax(0, 1fr); min-height: 100vh; }
+.sidebar {
+  position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; gap: 6px;
+  padding: 22px 14px; background: var(--surface); border-right: 1px solid var(--line); z-index: 40;
+}
+.brand { display: flex; align-items: center; gap: 12px; padding: 4px 10px 22px; font-family: var(--font-display); font-weight: 700; font-size: 1.2rem; }
+.brand-mark { display: grid; place-items: center; width: 38px; height: 38px; border-radius: 12px; background: var(--brand); color: #fff; box-shadow: 0 8px 18px rgba(109, 74, 255, 0.35); }
+.nav { display: grid; gap: 4px; }
+.nav-link { position: relative; display: flex; align-items: center; gap: 12px; padding: 11px 14px; border-radius: 11px; color: var(--ink-soft); font-weight: 500; transition: background 0.2s, color 0.2s; }
+.nav-link:hover { background: var(--surface-2); color: var(--ink); }
+.nav-link.active { background: var(--accent-bg); color: var(--accent); font-weight: 650; }
+.nav-link.active::before { content: ''; position: absolute; left: -14px; top: 10px; bottom: 10px; width: 4px; border-radius: 0 4px 4px 0; background: var(--brand); }
+.nav-count { margin-left: auto; min-width: 22px; padding: 1px 7px; border-radius: 99px; background: var(--brand); color: #fff; font-size: 0.74rem; font-weight: 700; text-align: center; }
+.sidebar-foot { margin-top: auto; display: grid; gap: 10px; padding-top: 14px; border-top: 1px solid var(--line); }
+.user-chip { display: flex; align-items: center; gap: 11px; padding: 6px 8px; }
+.avatar { display: grid; place-items: center; flex: none; width: 40px; height: 40px; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 700; font-family: var(--font-display); }
+.user-chip strong { display: block; line-height: 1.2; font-size: 0.95rem; }
+
+.content { min-width: 0; padding: 22px clamp(16px, 3vw, 44px) 70px; }
+.topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; min-height: 40px; }
+.menu-btn { display: none; }
+.page { max-width: 1220px; margin: 0 auto; animation: fade 0.35s var(--ease); }
+.page-head { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 16px; margin-bottom: 26px; }
+.page-head p { color: var(--ink-soft); margin-top: 6px; max-width: 60ch; }
+.scrim { display: none; }
+
+@media (max-width: 900px) {
+  .shell { grid-template-columns: 1fr; }
+  .sidebar { position: fixed; left: 0; top: 0; width: 270px; transform: translateX(-102%); transition: transform 0.3s var(--ease); box-shadow: var(--shadow-lift); }
+  .sidebar.open { transform: none; }
+  .scrim.open { display: block; position: fixed; inset: 0; background: rgba(14, 10, 40, 0.5); z-index: 35; }
+  .menu-btn { display: grid; }
+}
+
+/* ---------- Login / register ---------- */
+.auth { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); min-height: 100vh; }
+.auth-hero {
+  position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; gap: 40px; padding: 48px clamp(28px, 5vw, 72px); color: #fff;
+  background: linear-gradient(120deg, #4b2fd6, #7b3fe4, #d93f9d, #7b3fe4, #4b2fd6); background-size: 300% 300%; animation: drift 14s ease-in-out infinite alternate;
+}
+.auth-hero .brand { color: #fff; padding: 0; }
+.auth-hero .brand-mark { background: rgba(255, 255, 255, 0.2); box-shadow: none; }
+.auth-hero h1 { font-size: clamp(2.2rem, 4.2vw, 3.5rem); max-width: 14ch; font-weight: 750; }
+.auth-hero p { max-width: 42ch; opacity: 0.88; margin-top: 16px; font-size: 1.05rem; }
+.hero-cards { position: relative; height: 230px; }
+.hero-card { position: absolute; padding: 14px 18px; border-radius: 16px; background: rgba(255, 255, 255, 0.16); border: 1px solid rgba(255, 255, 255, 0.28); backdrop-filter: blur(10px); font-weight: 600; animation: float 6s ease-in-out infinite; }
+.hero-card small { display: block; font-weight: 500; opacity: 0.8; margin-bottom: 4px; }
+.hero-card .meter { height: 7px; width: 150px; border-radius: 9px; background: rgba(255, 255, 255, 0.25); margin-top: 8px; overflow: hidden; }
+.hero-card .meter i { display: block; height: 100%; border-radius: 9px; background: #fff; }
+.auth-panel { display: grid; place-items: center; padding: 32px 24px; }
+.auth-form { width: min(420px, 100%); display: grid; gap: 18px; animation: pop 0.5s var(--ease); }
+.auth-form h2 { font-size: 1.9rem; }
+.role-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 5px; border-radius: 13px; background: var(--surface-2); border: 1px solid var(--line); }
+.role-switch button { padding: 9px; border: none; border-radius: 9px; background: transparent; font-weight: 600; color: var(--ink-soft); cursor: pointer; transition: all 0.2s; }
+.role-switch button.active { background: var(--surface); color: var(--accent); box-shadow: var(--shadow); }
+.demo-box { display: grid; gap: 8px; padding: 14px; border-radius: 13px; border: 1.5px dashed var(--line); }
+@media (max-width: 900px) { .auth { grid-template-columns: 1fr; } .auth-hero { display: none; } }
