@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { GraduationCap } from 'lucide-react';
+import { GraduationCap, Eye, EyeOff } from 'lucide-react'; // This is a package basically i wanted to add the password hide and show option i-e eye toggle
 import { useAuth } from '../../context/AuthContext.jsx';
 import { homeFor } from '../../components/RouteGuards.jsx';
 
@@ -16,7 +16,7 @@ export default function AuthPage({ mode }) {
   const { login, register } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'student', teacherCode: '' });
-  const [error, setError] = useState('');
+ const [showPassword, setShowPassword] = useState(false); 
   const [busy, setBusy] = useState(false);
 
   const set = (field) => (e) => setForm({ ...form, [field]: e.target.value });
@@ -92,32 +92,28 @@ export default function AuthPage({ mode }) {
             <input id="email" type="email" className="input" value={form.email} onChange={set('email')} required autoComplete="email" />
           </div>
           <div className="field">
-            <label htmlFor="password">Password</label>
-            <input id="password" type="password" className="input" value={form.password} onChange={set('password')} required minLength={6} autoComplete={isLogin ? 'current-password' : 'new-password'} />
-          </div>
-          
-
-          {error && <div className="notice notice-bad" role="alert">{error}</div>}
-
-          <button className="btn btn-primary btn-block" disabled={busy}>{busy ? 'Please wait…' : isLogin ? 'Log in' : 'Create account'}</button>
-
-          {isLogin && (
-            <div className="demo-box">
-              <span className="small muted">Demo accounts are ready to use:</span>
-              <div className="row-wrap">
-                {DEMOS.map((d) => (
-                  <button type="button" key={d.email} className="btn btn-soft btn-sm" disabled={busy} onClick={() => authenticate(d)}>{d.label}</button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <p className="muted small center">
-            {isLogin ? 'New here? ' : 'Already have an account? '}
-            <Link to={isLogin ? '/register' : '/login'}>{isLogin ? 'Create an account' : 'Log in'}</Link>
-          </p>
-        </form>
-      </section>
-    </div>
-  );
-}
+  <label htmlFor="password">Password</label>
+  <div className="password-wrap">
+    <input
+      id="password"
+      type={showPassword ? 'text' : 'password'}
+      className="input"
+      value={form.password}
+      onChange={set('password')}
+      required
+      minLength={6}
+      autoComplete={isLogin ? 'current-password' : 'new-password'}
+    />
+    <button
+      type="button"
+      className="password-toggle"
+      onClick={() => setShowPassword(!showPassword)}
+      aria-label={showPassword ? 'Hide password' : 'Show password'}
+    >
+      {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+    </button>
+  </div>
+</div>
+            
+              
+      
