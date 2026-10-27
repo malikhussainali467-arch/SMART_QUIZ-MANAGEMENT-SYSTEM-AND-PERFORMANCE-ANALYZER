@@ -6,16 +6,16 @@
   --font-display: 'Bricolage Grotesque Variable', 'Segoe UI', system-ui, sans-serif;
   --font-body: 'DM Sans Variable', 'Segoe UI', system-ui, sans-serif;
 
-  --brand: linear-gradient(135deg, #6d4aff 0%, #a64bf4 55%, #ff4fa3 100%);
-  --canvas: #f5f3ff;
+  --brand: linear-gradient(135deg, #d4a373 0%, #be8a58 50%, #a47141 100%);
+  --canvas: #f8f6f2;
   --surface: #ffffff;
-  --surface-2: #faf9ff;
-  --line: #e7e3f7;
+  --surface-2: #faf8f5;
+  --line: #e9e3da;
   --ink: #17142b;
   --ink-soft: #5f5b7d;
   --ink-faint: #9b97b8;
-  --accent: #5b3ae6;
-  --accent-bg: #efebff;
+  --accent: #a47141;
+  --accent-bg: #f7f1ea;
 
   --good: #0f9c73;
   --good-bg: #e0f5ee;

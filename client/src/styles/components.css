@@ -11,8 +11,8 @@
 }
 .btn:active { transform: scale(0.96); }
 .btn[disabled] { opacity: 0.5; cursor: not-allowed; transform: none; }
-.btn-primary { background: var(--brand); color: #fff; box-shadow: 0 8px 20px rgba(109, 74, 255, 0.32); }
-.btn-primary:hover:not([disabled]) { box-shadow: 0 10px 26px rgba(166, 75, 244, 0.45); transform: translateY(-1px); }
+.btn-primary { background: var(--brand); color: #fff; box-shadow: 0 8px 20px rgba(164, 113, 65, 0.32); }
+.btn-primary:hover:not([disabled]) { box-shadow: 0 10px 26px rgba(164, 113, 65, 0.45); transform: translateY(-1px); }
 .btn-soft { background: var(--accent-bg); color: var(--accent); }
 .btn-soft:hover:not([disabled]) { background: color-mix(in srgb, var(--accent) 18%, var(--accent-bg)); }
 .btn-ghost { background: var(--surface); border-color: var(--line); color: var(--ink); }

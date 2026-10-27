@@ -105,7 +105,7 @@ export default function AuthPage({ mode }) {
                 onClick={() => setShowPassword((prev) => !prev)}
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
-               np {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+                {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
               </button>
             </div>
           </div>
