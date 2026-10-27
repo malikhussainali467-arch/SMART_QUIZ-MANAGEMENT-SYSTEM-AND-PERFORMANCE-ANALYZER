@@ -1,7 +1,6 @@
 // Demo subjects, topics, questions and quizzes. Edit freely: it only loads into an EMPTY database.
 //
-// MCQ format:    [topic, question, correctAnswer, [wrong, wrong, wrong], difficulty, explanation]
-// Theory format: [topic, question, modelAnswer, [keywords], marks, difficulty]
+// MCQ format: [topic, question, correctAnswer, [wrong, wrong, wrong], difficulty, explanation]
 
 export const SUBJECTS = [
   { name: 'Data Structures & Algorithms', color: '#6d4aff', description: 'Core structures and the algorithms that use them.', topics: ['Arrays & Linked Lists', 'Stacks & Queues', 'Trees', 'Sorting & Searching'] },
@@ -55,30 +54,21 @@ export const MCQS = [
   ['Network Protocols', 'What does ARP do?', 'Maps an IP address to a MAC address', ['Maps a domain name to an IP address', 'Assigns IP addresses', 'Encrypts traffic'], 'hard', 'Used on a local network to find the hardware address of a host.'],
 ];
 
-export const THEORY = [
-  ['Arrays & Linked Lists', 'Explain two differences between an array and a linked list.', 'Arrays use contiguous memory and give O(1) random access, but inserting needs shifting. Linked lists use pointers, grow dynamically and insert quickly at a known node, but access is O(n).', ['contiguous', 'random access', 'pointer', 'dynamic', 'insert'], 4, 'medium'],
-  ['Trees', 'What is a binary search tree? State its ordering rule.', 'A binary tree where every node is greater than all values in its left subtree and smaller than all values in its right subtree, so inorder traversal is sorted.', ['left', 'right', 'smaller', 'greater', 'inorder'], 3, 'medium'],
-  ['Normalization', 'Why do we normalize a database? Name two anomalies it prevents.', 'To remove redundancy. It prevents insertion, update and deletion anomalies.', ['redundancy', 'insertion', 'update', 'deletion', 'anomal'], 3, 'medium'],
-  ['Transactions', 'Explain the ACID properties briefly.', 'Atomicity: all or nothing. Consistency: valid state to valid state. Isolation: transactions do not interfere. Durability: committed data survives failures.', ['atomicity', 'consistency', 'isolation', 'durability'], 4, 'medium'],
-  ['Network Protocols', 'What is the difference between TCP and UDP?', 'TCP is connection-oriented and reliable (handshake, acknowledgements, ordering). UDP is connectionless and faster but gives no delivery guarantee.', ['connection', 'reliable', 'handshake', 'faster', 'guarantee'], 3, 'medium'],
-  ['OSI & TCP/IP', 'Name four layers of the OSI model and one job of each.', 'Physical: bits on the wire. Data link: frames and MAC addresses. Network: routing with IP. Transport: end-to-end delivery. Application: user-facing protocols.', ['physical', 'data link', 'network', 'transport', 'application'], 4, 'medium'],
-];
-
-// Quizzes pick questions by topic name. `count` = random questions drawn per attempt (0 = all).
+// Quizzes pick questions by topic name.
 export const QUIZZES = [
-  { title: 'DSA Fundamentals', subject: 'Data Structures & Algorithms', topics: ['Arrays & Linked Lists', 'Stacks & Queues', 'Trees', 'Sorting & Searching'], count: 10, minutes: 20, published: true, description: 'A mixed check of the core structures.' },
-  { title: 'Trees & Sorting Sprint', subject: 'Data Structures & Algorithms', topics: ['Trees', 'Sorting & Searching'], count: 6, minutes: 8, published: true, description: 'Short and sharp.' },
-  { title: 'Database Essentials', subject: 'Database Systems', topics: ['SQL Basics', 'Normalization', 'Transactions'], count: 8, minutes: 15, published: true, description: 'SQL, normal forms and ACID.' },
-  { title: 'Networking Basics', subject: 'Computer Networks', topics: ['OSI & TCP/IP', 'IP Addressing', 'Network Protocols'], count: 10, minutes: 15, published: true, description: 'Layers, addressing and protocols.' },
-  { title: 'Midterm Mock (draft)', subject: 'Data Structures & Algorithms', topics: ['Arrays & Linked Lists', 'Trees'], count: 0, minutes: 30, published: false, description: 'Not visible to students until published.' },
+  { title: 'DSA Fundamentals', subject: 'Data Structures & Algorithms', topics: ['Arrays & Linked Lists', 'Stacks & Queues', 'Trees', 'Sorting & Searching'], published: true, description: 'A check of the core data structures and algorithms.' },
+  { title: 'Trees & Sorting Sprint', subject: 'Data Structures & Algorithms', topics: ['Trees', 'Sorting & Searching'], published: true, description: 'Short and sharp quiz on trees and sorting.' },
+  { title: 'Database Essentials', subject: 'Database Systems', topics: ['SQL Basics', 'Normalization', 'Transactions'], published: true, description: 'SQL, normal forms and ACID.' },
+  { title: 'Networking Basics', subject: 'Computer Networks', topics: ['OSI & TCP/IP', 'IP Addressing', 'Network Protocols'], published: true, description: 'Layers, addressing and protocols.' },
+  { title: 'Midterm Mock (draft)', subject: 'Data Structures & Algorithms', topics: ['Arrays & Linked Lists', 'Trees'], published: false, description: 'Not visible to students until published.' },
 ];
 
-// Demo students. `skill` = chance of a right answer, `weak` = topics where they struggle.
+// Demo students.
 export const STUDENTS = [
-  { name: 'Demo Student', email: 'student@quiz.com', skill: 0.8, weak: { 'Trees': 0.3, 'Normalization': 0.35, 'IP Addressing': 0.45 }, attempts: 9, streak: true },
-  { name: 'Ayesha Khan', email: 'ayesha@quiz.com', skill: 0.88, weak: { 'Transactions': 0.5 }, attempts: 8, pending: true },
-  { name: 'Hamza Raza', email: 'hamza@quiz.com', skill: 0.7, weak: { 'SQL Basics': 0.3 }, attempts: 7, pending: true },
-  { name: 'Sana Malik', email: 'sana@quiz.com', skill: 0.62, weak: { 'Network Protocols': 0.25, 'Trees': 0.3 }, attempts: 6 },
-  { name: 'Bilal Ahmed', email: 'bilal@quiz.com', skill: 0.45, weak: {}, attempts: 5 },
-  { name: 'Zara Iqbal', email: 'zara@quiz.com', skill: 0.75, weak: { 'Sorting & Searching': 0.4 }, attempts: 6 },
+  { name: 'Demo Student', email: 'student@quiz.com', skill: 0.8, attempts: 6 },
+  { name: 'Ayesha Khan', email: 'ayesha@quiz.com', skill: 0.88, attempts: 5 },
+  { name: 'Hamza Raza', email: 'hamza@quiz.com', skill: 0.7, attempts: 5 },
+  { name: 'Sana Malik', email: 'sana@quiz.com', skill: 0.62, attempts: 4 },
+  { name: 'Bilal Ahmed', email: 'bilal@quiz.com', skill: 0.45, attempts: 4 },
+  { name: 'Zara Iqbal', email: 'zara@quiz.com', skill: 0.75, attempts: 5 },
 ];

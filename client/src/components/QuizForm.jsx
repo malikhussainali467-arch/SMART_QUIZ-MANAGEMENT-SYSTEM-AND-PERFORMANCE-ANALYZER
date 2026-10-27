@@ -15,7 +15,7 @@ function Toggle({ label, checked, onChange }) {
   );
 }
 
-/** Create / edit a quiz: settings + choose which questions are in the pool. */
+/** Create / edit a quiz: settings + choose which questions are in the quiz. */
 export default function QuizForm({ quiz, subjects, onClose, onSaved }) {
   const toast = useToast();
   const isEdit = Boolean(quiz?._id);
@@ -24,12 +24,7 @@ export default function QuizForm({ quiz, subjects, onClose, onSaved }) {
     description: quiz?.description || '',
     subject: quiz?.subject?._id || quiz?.subject || subjects[0]?._id || '',
     questions: quiz?.questions || [],
-    questionCount: quiz?.questionCount ?? 0,
-    durationMinutes: quiz?.durationMinutes ?? 15,
     passPercent: quiz?.passPercent ?? 50,
-    maxAttempts: quiz?.maxAttempts ?? 0,
-    shuffleQuestions: quiz?.shuffleQuestions ?? true,
-    shuffleOptions: quiz?.shuffleOptions ?? true,
     isPublished: quiz?.isPublished ?? false,
   }));
   const [search, setSearch] = useState('');
@@ -70,19 +65,14 @@ export default function QuizForm({ quiz, subjects, onClose, onSaved }) {
             {subjects.map((s) => <option key={s._id} value={s._id}>{s.name}</option>)}
           </select>
         </div>
-        <div className="field"><label htmlFor="qzdur">Time limit (minutes, 0 = untimed)</label><input id="qzdur" type="number" min="0" className="input" value={form.durationMinutes} onChange={num('durationMinutes')} /></div>
-        <div className="field"><label htmlFor="qzcount">Questions per attempt (0 = all in pool)</label><input id="qzcount" type="number" min="0" className="input" value={form.questionCount} onChange={num('questionCount')} /></div>
         <div className="field"><label htmlFor="qzpass">Pass mark (%)</label><input id="qzpass" type="number" min="0" max="100" className="input" value={form.passPercent} onChange={num('passPercent')} /></div>
-        <div className="field"><label htmlFor="qzmax">Max attempts (0 = unlimited)</label><input id="qzmax" type="number" min="0" className="input" value={form.maxAttempts} onChange={num('maxAttempts')} /></div>
-        <div className="field" style={{ alignContent: 'end', gap: 12 }}>
-          <Toggle label="Shuffle questions" checked={form.shuffleQuestions} onChange={(v) => setForm({ ...form, shuffleQuestions: v })} />
-          <Toggle label="Shuffle answer options" checked={form.shuffleOptions} onChange={(v) => setForm({ ...form, shuffleOptions: v })} />
+        <div className="field full" style={{ marginTop: 8 }}>
           <Toggle label="Published (visible to students)" checked={form.isPublished} onChange={(v) => setForm({ ...form, isPublished: v })} />
         </div>
 
         <div className="field full">
           <div className="row spread">
-            <span className="label">Question pool ({form.questions.length} selected)</span>
+            <span className="label">Questions ({form.questions.length} selected)</span>
             <span className="row">
               <button type="button" className="btn btn-soft btn-sm" onClick={() => setForm({ ...form, questions: [...new Set([...form.questions, ...(bank.data || []).map((q) => q._id)])] })}>Select all</button>
               <button type="button" className="btn btn-ghost btn-sm" onClick={() => setForm({ ...form, questions: [] })}>Clear</button>
@@ -98,7 +88,7 @@ export default function QuizForm({ quiz, subjects, onClose, onSaved }) {
                   {shown.map((q) => (
                     <label className="picker-row" key={q._id}>
                       <input type="checkbox" checked={form.questions.includes(q._id)} onChange={() => toggleQuestion(q._id)} />
-                      <span><span>{q.text}</span><br /><span className="small muted">{q.topic?.name} · {q.type === 'mcq' ? 'MCQ' : 'Written'} · {q.difficulty}</span></span>
+                      <span><span>{q.text}</span><br /><span className="small muted">{q.topic?.name} · {q.difficulty}</span></span>
                     </label>
                   ))}
                 </div>

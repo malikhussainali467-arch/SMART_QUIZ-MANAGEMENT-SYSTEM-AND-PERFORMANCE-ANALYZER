@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookOpenCheck, Clock, ListChecks, Play, RotateCcw, Search, Target } from 'lucide-react';
+import { BookOpenCheck, ListChecks, Play, RotateCcw, Search, Target } from 'lucide-react';
 import { api } from '../../api/client.js';
 import { useToast } from '../../context/ToastContext.jsx';
 import { useFetch } from '../../hooks/useFetch.js';
@@ -40,7 +40,7 @@ export default function QuizListPage() {
 
   return (
     <>
-      <PageHeader title="Quizzes" subtitle="Pick a quiz. Timed quizzes start the clock as soon as you begin." />
+      <PageHeader title="Quizzes" subtitle="Pick a quiz to test your knowledge." />
 
       <div className="row-wrap" style={{ marginBottom: 22 }}>
         <div className="search" style={{ width: 260 }}>
@@ -62,30 +62,25 @@ export default function QuizListPage() {
 
           return (
             <div className="grid grid-3">
-              {shown.map((q) => {
-                const locked = q.maxAttempts > 0 && q.attemptsUsed >= q.maxAttempts && !q.inProgressAttemptId;
-                return (
-                  <div className="card quiz-card" key={q._id}>
-                    <div className="row spread">
-                      <span className="badge" style={{ background: `${q.subject.color}22`, color: q.subject.color }}>{q.subject.name}</span>
-                      {q.bestPercentage !== null && <span className={`badge badge-${toneForPercent(q.bestPercentage)}`}>Best {Math.round(q.bestPercentage)}%</span>}
-                    </div>
-                    <div>
-                      <h3>{q.title}</h3>
-                      {q.description && <p className="muted small" style={{ marginTop: 6 }}>{q.description}</p>}
-                    </div>
-                    <div className="quiz-meta">
-                      <span><ListChecks size={16} /> {q.size} questions</span>
-                      <span><Clock size={16} /> {q.durationMinutes ? `${q.durationMinutes} min` : 'Untimed'}</span>
-                      <span><Target size={16} /> Pass {q.passPercent}%</span>
-                    </div>
-                    <button className="btn btn-primary" disabled={locked} onClick={() => (q.inProgressAttemptId ? start(q) : setSelected(q))}>
-                      {q.inProgressAttemptId ? <><Play size={16} /> Resume</> : q.attemptsUsed ? <><RotateCcw size={16} /> Retake</> : <><Play size={16} /> Start quiz</>}
-                    </button>
-                    {locked && <span className="small muted">No attempts left.</span>}
+              {shown.map((q) => (
+                <div className="card quiz-card" key={q._id}>
+                  <div className="row spread">
+                    <span className="badge" style={{ background: `${q.subject.color}22`, color: q.subject.color }}>{q.subject.name}</span>
+                    {q.bestPercentage !== null && <span className={`badge badge-${toneForPercent(q.bestPercentage)}`}>Best {Math.round(q.bestPercentage)}%</span>}
                   </div>
-                );
-              })}
+                  <div>
+                    <h3>{q.title}</h3>
+                    {q.description && <p className="muted small" style={{ marginTop: 6 }}>{q.description}</p>}
+                  </div>
+                  <div className="quiz-meta">
+                    <span><ListChecks size={16} /> {q.size} questions</span>
+                    <span><Target size={16} /> Pass {q.passPercent}%</span>
+                  </div>
+                  <button className="btn btn-primary" onClick={() => (q.inProgressAttemptId ? start(q) : setSelected(q))}>
+                    {q.inProgressAttemptId ? <><Play size={16} /> Resume</> : q.attemptsUsed ? <><RotateCcw size={16} /> Retake</> : <><Play size={16} /> Start quiz</>}
+                  </button>
+                </div>
+              ))}
             </div>
           );
         }}
@@ -103,10 +98,10 @@ export default function QuizListPage() {
           }
         >
           <ul className="stack muted" style={{ paddingLeft: 20, margin: 0, gap: 8 }}>
-            <li>{selected.size} questions, mixed multiple-choice and written answers.</li>
-            <li>{selected.durationMinutes ? `You have ${selected.durationMinutes} minutes. The quiz submits itself when time runs out.` : 'There is no time limit.'}</li>
-            <li>You can move between questions and flag the ones to revisit.</li>
-            <li>{selected.maxAttempts ? `You may attempt this quiz ${selected.maxAttempts} time(s).` : 'You can retake this quiz as often as you like.'}</li>
+            <li>{selected.size} multiple-choice questions.</li>
+            <li>There is no time limit. Take your time to answer each question.</li>
+            <li>You can move between questions and flag questions to revisit.</li>
+            <li>You can retake this quiz as often as you like.</li>
           </ul>
         </Modal>
       )}

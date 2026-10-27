@@ -1,16 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Clock, Flag, Send, Sparkles } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Flag, Send } from 'lucide-react';
 import { api } from '../../api/client.js';
 import { useToast } from '../../context/ToastContext.jsx';
 import { Loader } from '../../components/Async.jsx';
 import Modal from '../../components/Modal.jsx';
-import { DIFFICULTY_LABEL, DIFFICULTY_TONE, clock } from '../../utils/format.js';
+import { DIFFICULTY_LABEL, DIFFICULTY_TONE } from '../../utils/format.js';
 
 const LETTERS = ['A', 'B', 'C', 'D', 'E', 'F'];
-const LOW_TIME_SECONDS = 60;
 
-/** The quiz player: timer, question navigator, flags, keyboard shortcuts and auto-submit. */
+/** The quiz player: question navigator, flags, keyboard shortcuts and manual submit (untimed). */
 export default function TakeQuizPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -18,26 +17,22 @@ export default function TakeQuizPage() {
 
   const [data, setData] = useState(null);
   const [error, setError] = useState('');
-  const [answers, setAnswers] = useState({}); // questionId -> { selected, text }
+  const [answers, setAnswers] = useState({}); // questionId -> { selected }
   const [flags, setFlags] = useState({}); // questionId -> true
   const [index, setIndex] = useState(0);
-  const [secondsLeft, setSecondsLeft] = useState(null);
   const [confirming, setConfirming] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const deadline = useRef(null); // exact end time, so the timer survives slow renders
-  const answersRef = useRef({}); // always-current copy for the auto-submit
+  const answersRef = useRef({});
   const submitted = useRef(false);
   const storageKey = `smartquiz_attempt_${id}`;
   answersRef.current = answers;
 
-  // ---- Load the attempt (and restore answers saved in this browser after a refresh)
+  // Load the attempt (and restore answers saved in this browser after a refresh)
   useEffect(() => {
     api.get(`/attempts/${id}`)
       .then((res) => {
         if (res.attempt.status === 'submitted') return navigate(`/results/${id}`, { replace: true });
-        if (res.remainingSeconds !== null) deadline.current = Date.now() + res.remainingSeconds * 1000;
-        setSecondsLeft(res.remainingSeconds);
         const saved = JSON.parse(localStorage.getItem(storageKey) || 'null');
         if (saved) {
           setAnswers(saved.answers || {});
@@ -53,27 +48,16 @@ export default function TakeQuizPage() {
     if (data) localStorage.setItem(storageKey, JSON.stringify({ answers, flags, index }));
   }, [answers, flags, index, data, storageKey]);
 
-  // ---- Countdown
-  useEffect(() => {
-    if (!data || deadline.current === null) return undefined;
-    const timer = setInterval(() => {
-      const left = Math.max(0, Math.round((deadline.current - Date.now()) / 1000));
-      setSecondsLeft(left);
-      if (left <= 0) submit(true);
-    }, 500);
-    return () => clearInterval(timer);
-  }, [data]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  // ---- Keyboard: A-D / 1-4 choose an option, arrows move between questions
+  // Keyboard: A-D / 1-4 choose an option, arrows move between questions
   useEffect(() => {
     if (!data) return undefined;
     const onKey = (e) => {
       if (['TEXTAREA', 'INPUT'].includes(e.target.tagName) || confirming) return;
-      const q = data.questions[index];
+      const curQ = data.questions[index];
       const pressed = e.key.length === 1 ? 'ABCDEF'.indexOf(e.key.toUpperCase()) : -1;
       const digit = Number(e.key) - 1;
       const choice = pressed >= 0 ? pressed : digit >= 0 && digit < 6 ? digit : -1;
-      if (q.type === 'mcq' && q.options[choice]) setAnswer(q.id, { selected: q.options[choice].index });
+      if (curQ.options[choice]) setAnswer(curQ.id, { selected: curQ.options[choice].index });
       if (e.key === 'ArrowRight') setIndex((i) => Math.min(i + 1, data.questions.length - 1));
       if (e.key === 'ArrowLeft') setIndex((i) => Math.max(i - 1, 0));
     };
@@ -83,19 +67,17 @@ export default function TakeQuizPage() {
 
   const setAnswer = (questionId, value) => setAnswers((prev) => ({ ...prev, [questionId]: value }));
 
-  async function submit(auto = false) {
+  async function submit() {
     if (submitted.current) return;
     submitted.current = true;
     setSubmitting(true);
     try {
-      const list = data.questions.map((q) => ({
-        question: q.id,
-        selected: answersRef.current[q.id]?.selected ?? null,
-        text: answersRef.current[q.id]?.text ?? '',
+      const list = data.questions.map((item) => ({
+        question: item.id,
+        selected: answersRef.current[item.id]?.selected ?? null,
       }));
       await api.post(`/attempts/${id}/submit`, { answers: list });
       localStorage.removeItem(storageKey);
-      if (auto) toast.error('Time is up. Your answers were submitted.');
       navigate(`/results/${id}`, { replace: true, state: { fresh: true } });
     } catch (e) {
       submitted.current = false;
@@ -111,28 +93,22 @@ export default function TakeQuizPage() {
   const q = questions[index];
   const isAnswered = (question) => {
     const a = answers[question.id];
-    return question.type === 'mcq' ? a?.selected !== undefined && a?.selected !== null : Boolean(a?.text?.trim());
+    return a?.selected !== undefined && a?.selected !== null;
   };
   const answeredCount = questions.filter(isAnswered).length;
   const unanswered = questions.length - answeredCount;
-  const low = secondsLeft !== null && secondsLeft <= LOW_TIME_SECONDS;
 
   return (
     <div className="player">
       <header className="player-head">
         <div className="player-head-inner">
           <span className="player-title">{attempt.title}</span>
-          <span className="right row">
-            {attempt.kind === 'practice' && <span className="badge"><Sparkles size={13} /> Practice</span>}
-            {secondsLeft !== null && <span className={`timer ${low ? 'low' : ''}`}><Clock size={17} /> {clock(secondsLeft)}</span>}
-          </span>
         </div>
         <div className="progress-line"><i style={{ width: `${(answeredCount / questions.length) * 100}%` }} /></div>
       </header>
 
       <div className="player-body">
         <div>
-          {/* key = question id so every question slides in */}
           <div className="card q-card" key={q.id}>
             <div className="row-wrap spread">
               <div className="row-wrap" style={{ gap: 8 }}>
@@ -148,27 +124,20 @@ export default function TakeQuizPage() {
 
             <h2 className="q-text">{q.text}</h2>
 
-            {q.type === 'mcq' ? (
-              <div className="options" role="radiogroup">
-                {q.options.map((option, position) => (
-                  <button
-                    key={option.index}
-                    role="radio"
-                    aria-checked={answers[q.id]?.selected === option.index}
-                    className={`option ${answers[q.id]?.selected === option.index ? 'selected' : ''}`}
-                    onClick={() => setAnswer(q.id, { selected: option.index })}
-                  >
-                    <span className="option-key">{LETTERS[position]}</span>
-                    {option.text}
-                  </button>
-                ))}
-              </div>
-            ) : (
-              <div className="field">
-                <label htmlFor="written">Your answer</label>
-                <textarea id="written" className="textarea" style={{ minHeight: 170 }} placeholder="Write your answer in your own words…" value={answers[q.id]?.text || ''} onChange={(e) => setAnswer(q.id, { text: e.target.value })} />
-              </div>
-            )}
+            <div className="options" role="radiogroup">
+              {q.options.map((option, position) => (
+                <button
+                  key={option.index}
+                  role="radio"
+                  aria-checked={answers[q.id]?.selected === option.index}
+                  className={`option ${answers[q.id]?.selected === option.index ? 'selected' : ''}`}
+                  onClick={() => setAnswer(q.id, { selected: option.index })}
+                >
+                  <span className="option-key">{LETTERS[position]}</span>
+                  {option.text}
+                </button>
+              ))}
+            </div>
 
             <div className="player-actions">
               <button className="btn btn-ghost" disabled={index === 0} onClick={() => setIndex(index - 1)}><ChevronLeft size={18} /> Previous</button>
@@ -211,7 +180,7 @@ export default function TakeQuizPage() {
           footer={
             <>
               <button className="btn btn-ghost" onClick={() => setConfirming(false)}>Keep working</button>
-              <button className="btn btn-primary" disabled={submitting} onClick={() => submit(false)}>{submitting ? 'Submitting…' : 'Submit now'}</button>
+              <button className="btn btn-primary" disabled={submitting} onClick={() => submit()}>{submitting ? 'Submitting…' : 'Submit now'}</button>
             </>
           }
         >

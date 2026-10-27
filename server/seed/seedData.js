@@ -1,5 +1,5 @@
 // Fills an EMPTY database with demo users, content and realistic attempt history,
-// so every screen (dashboards, weak topics, leaderboard) has something to show on day one.
+// so every screen has something to show on day one.
 import { User } from '../models/User.js';
 import { Subject } from '../models/Subject.js';
 import { Topic } from '../models/Topic.js';
@@ -9,7 +9,7 @@ import { Attempt } from '../models/Attempt.js';
 import { GradingService } from '../services/GradingService.js';
 import { QuizBuilderService } from '../services/QuizBuilderService.js';
 import { DAY_MS, shuffle } from '../utils/helpers.js';
-import { MCQS, QUIZZES, STUDENTS, SUBJECTS, THEORY } from './demoContent.js';
+import { MCQS, QUIZZES, STUDENTS, SUBJECTS } from './demoContent.js';
 
 const TEACHER = { name: 'Demo Teacher', email: 'teacher@quiz.com', password: 'teacher123' };
 const STUDENT_PASSWORD = 'student123';
@@ -38,43 +38,41 @@ async function createContent(teacher) {
     const options = shuffle([correct, ...wrong]);
     await Question.create({ ...base(topic), type: 'mcq', text, options, correctIndex: options.indexOf(correct), difficulty, explanation });
   }
-  for (const [topic, text, modelAnswer, keywords, marks, difficulty] of THEORY) {
-    await Question.create({ ...base(topic), type: 'theory', text, modelAnswer, keywords, marks, difficulty });
-  }
 
   for (const data of QUIZZES) {
     const subject = await Subject.findOne({ name: data.subject });
     const topicIds = data.topics.map((name) => topicByName.get(name)._id);
     const questions = await Question.find({ topic: { $in: topicIds } });
     await Quiz.create({
-      title: data.title, description: data.description, subject: subject._id,
-      questions: questions.map((q) => q._id), questionCount: data.count, durationMinutes: data.minutes,
-      isPublished: data.published, createdBy: teacher._id,
+      title: data.title,
+      description: data.description,
+      subject: subject._id,
+      questions: questions.map((q) => q._id),
+      questionCount: 0,
+      durationMinutes: 0,
+      maxAttempts: 0,
+      shuffleQuestions: false,
+      shuffleOptions: false,
+      isPublished: data.published,
+      createdBy: teacher._id,
     });
   }
 }
 
-/** Pretends a student took a quiz `daysAgo` days ago, answering right with a topic-dependent chance. */
-async function simulateAttempt({ user, quiz, profile, daysAgo, leavePending }) {
+/** Pretends a student took a quiz `daysAgo` days ago. */
+async function simulateAttempt({ user, quiz, profile, daysAgo }) {
   const items = await QuizBuilderService.fromQuiz(quiz);
-  const questions = await Question.find({ _id: { $in: items.map((i) => i.question) } }).populate('topic');
+  const questions = await Question.find({ _id: { $in: items.map((i) => i.question) } });
   const byId = new Map(questions.map((q) => [String(q._id), q]));
-  const topicName = (q) => q.topic.name;
 
   const submitted = questions.map((q) => {
-    const chance = profile.weak[topicName(q)] ?? profile.skill;
-    const right = Math.random() < chance;
-    if (q.type === 'theory') {
-      const used = q.keywords.filter(() => right || Math.random() < 0.25);
-      return { question: q._id, text: used.join(', ') };
-    }
+    const right = Math.random() < profile.skill;
     const wrongIndex = q.options.map((_, i) => i).find((i) => i !== q.correctIndex);
     return { question: q._id, selected: right ? q.correctIndex : wrongIndex };
   });
 
   const attempt = new Attempt({ user: user._id, quiz: quiz._id, title: quiz.title, passPercent: quiz.passPercent, items });
   GradingService.gradeAttempt(attempt, byId, submitted);
-  if (!leavePending) attempt.answers.forEach((a) => (a.reviewed = true)); // pretend the teacher already checked
   GradingService.updateTotals(attempt);
 
   const finished = new Date(Date.now() - daysAgo * DAY_MS - Math.random() * 3 * 3600000);
@@ -89,14 +87,12 @@ async function createHistory(students) {
 
   for (const [index, profile] of STUDENTS.entries()) {
     for (let n = 0; n < profile.attempts; n++) {
-      // Spread attempts over ~3 weeks; the demo student also studied on each of the last 3 days (streak).
-      const daysAgo = profile.streak && n < 3 ? n : Math.round(((profile.attempts - n) / profile.attempts) * 21) + 1;
+      const daysAgo = Math.round(((profile.attempts - n) / profile.attempts) * 21) + 1;
       await simulateAttempt({
         user: students[index],
         quiz: quizzes[n % quizzes.length],
         profile,
         daysAgo,
-        leavePending: Boolean(profile.pending) && n === profile.attempts - 1,
       });
     }
   }

@@ -2,7 +2,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.jsx';
 import { Loader } from './Async.jsx';
 
-export const homeFor = (user) => (user.role === 'teacher' ? '/teacher' : '/dashboard');
+export const homeFor = (user) => (user.role === 'teacher' ? '/teacher/quizzes' : '/dashboard');
 
 /** Only logged-in users (optionally only certain roles) can open the routes inside. */
 export function RequireAuth({ role }) {

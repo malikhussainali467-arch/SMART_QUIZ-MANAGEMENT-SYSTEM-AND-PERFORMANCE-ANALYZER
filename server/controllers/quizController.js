@@ -4,12 +4,8 @@ import { Attempt } from '../models/Attempt.js';
 import { HttpError, asyncHandler, ensureFound, pick, requireFields } from '../utils/helpers.js';
 
 const EDITABLE = [
-  'title', 'description', 'subject', 'questions', 'questionCount', 'durationMinutes',
-  'shuffleQuestions', 'shuffleOptions', 'passPercent', 'maxAttempts', 'isPublished',
+  'title', 'description', 'subject', 'questions', 'passPercent', 'isPublished',
 ];
-
-/** How many questions one attempt will contain. */
-const sizeOf = (quiz) => (quiz.questionCount > 0 ? Math.min(quiz.questionCount, quiz.questions.length) : quiz.questions.length);
 
 export const listQuizzes = asyncHandler(async (req, res) => {
   const isTeacher = req.user.role === 'teacher';
@@ -19,7 +15,15 @@ export const listQuizzes = asyncHandler(async (req, res) => {
   res.json(
     quizzes.map((quiz) => {
       const own = attempts.filter((a) => String(a.quiz) === String(quiz._id));
-      const base = { ...quiz.toObject(), questions: undefined, poolSize: quiz.questions.length, size: sizeOf(quiz) };
+      const qCount = quiz.questions ? quiz.questions.length : 0;
+      const base = {
+        ...quiz.toObject(),
+        questions: undefined,
+        poolSize: qCount,
+        size: qCount,
+        durationMinutes: 0,
+        maxAttempts: 0,
+      };
       if (isTeacher) return { ...base, attemptCount: own.length };
 
       const done = own.filter((a) => a.status === 'submitted');
@@ -47,7 +51,15 @@ export const createQuiz = asyncHandler(async (req, res) => {
   requireFields(req.body, ['title', 'subject']);
   const data = pick(req.body, EDITABLE);
   validate(data);
-  res.status(201).json(await Quiz.create({ ...data, createdBy: req.user._id }));
+  res.status(201).json(await Quiz.create({
+    ...data,
+    durationMinutes: 0,
+    maxAttempts: 0,
+    questionCount: 0,
+    shuffleQuestions: false,
+    shuffleOptions: false,
+    createdBy: req.user._id,
+  }));
 });
 
 export const updateQuiz = asyncHandler(async (req, res) => {

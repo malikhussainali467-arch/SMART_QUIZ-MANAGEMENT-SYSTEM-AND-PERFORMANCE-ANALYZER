@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { BarChart3, ClipboardList, Clock, Pencil, Plus, Trash2 } from 'lucide-react';
+import { BarChart3, ClipboardList, Pencil, Plus, Trash2 } from 'lucide-react';
 import { api } from '../../api/client.js';
 import { useToast } from '../../context/ToastContext.jsx';
 import { useFetch } from '../../hooks/useFetch.js';
@@ -66,8 +66,8 @@ export default function QuizzesPage() {
                         <div><span className="badge" style={{ background: `${q.subject.color}22`, color: q.subject.color }}>{q.subject.name}</span></div>
                       </td>
                       <td className="muted small">
-                        {q.size} of {q.poolSize} questions<br />
-                        <Clock size={13} style={{ display: 'inline', verticalAlign: '-2px' }} /> {q.durationMinutes ? `${q.durationMinutes} min` : 'Untimed'} · pass {q.passPercent}%
+                        {q.size} questions<br />
+                        Pass {q.passPercent}%
                       </td>
                       <td className="num">{q.attemptCount}</td>
                       <td>

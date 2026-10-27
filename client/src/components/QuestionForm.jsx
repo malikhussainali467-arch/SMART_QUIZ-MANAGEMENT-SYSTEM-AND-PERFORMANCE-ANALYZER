@@ -6,7 +6,7 @@ import { useToast } from '../context/ToastContext.jsx';
 
 const MAX_OPTIONS = 6;
 
-/** Create / edit one question (MCQ or written). `subjects` = list with their topics. */
+/** Create / edit one MCQ question. `subjects` = list with their topics. */
 export default function QuestionForm({ question, subjects, onClose, onSaved }) {
   const toast = useToast();
   const isEdit = Boolean(question?._id);
@@ -14,15 +14,13 @@ export default function QuestionForm({ question, subjects, onClose, onSaved }) {
 
   const [form, setForm] = useState(() => ({
     topic: question?.topic?._id || firstTopic,
-    type: question?.type || 'mcq',
+    type: 'mcq',
     text: question?.text || '',
     difficulty: question?.difficulty || 'medium',
     marks: question?.marks || 1,
     explanation: question?.explanation || '',
     options: question?.options?.length ? question.options : ['', '', '', ''],
     correctIndex: question?.correctIndex || 0,
-    modelAnswer: question?.modelAnswer || '',
-    keywords: (question?.keywords || []).join(', '),
   }));
   const [saving, setSaving] = useState(false);
 
@@ -37,7 +35,11 @@ export default function QuestionForm({ question, subjects, onClose, onSaved }) {
 
   async function save() {
     setSaving(true);
-    const body = { ...form, marks: Number(form.marks), keywords: form.keywords.split(',').map((k) => k.trim()).filter(Boolean) };
+    const body = {
+      ...form,
+      type: 'mcq',
+      marks: Number(form.marks),
+    };
     try {
       await (isEdit ? api.put(`/questions/${question._id}`, body) : api.post('/questions', body));
       toast.success('Question saved');
@@ -67,13 +69,6 @@ export default function QuestionForm({ question, subjects, onClose, onSaved }) {
           </select>
         </div>
         <div className="field">
-          <label htmlFor="qtype">Type</label>
-          <select id="qtype" className="select" value={form.type} onChange={set('type')}>
-            <option value="mcq">Multiple choice</option>
-            <option value="theory">Written (theory)</option>
-          </select>
-        </div>
-        <div className="field">
           <label htmlFor="qdiff">Difficulty</label>
           <select id="qdiff" className="select" value={form.difficulty} onChange={set('difficulty')}>
             <option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option>
@@ -88,33 +83,19 @@ export default function QuestionForm({ question, subjects, onClose, onSaved }) {
           <textarea id="qtext" className="textarea" value={form.text} onChange={set('text')} />
         </div>
 
-        {form.type === 'mcq' ? (
-          <div className="field full">
-            <span className="label">Options (select the correct one)</span>
-            {form.options.map((option, i) => (
-              <div className="option-edit" key={i}>
-                <input type="radio" name="correct" checked={form.correctIndex === i} onChange={() => setForm({ ...form, correctIndex: i })} aria-label={`Option ${i + 1} is correct`} />
-                <input className="input" value={option} placeholder={`Option ${i + 1}`} onChange={(e) => setOption(i, e.target.value)} />
-                {form.options.length > 2 && <button type="button" className="icon-btn" aria-label="Remove option" onClick={() => removeOption(i)}><Trash2 size={16} /></button>}
-              </div>
-            ))}
-            {form.options.length < MAX_OPTIONS && (
-              <div><button type="button" className="btn btn-soft btn-sm" onClick={() => setForm({ ...form, options: [...form.options, ''] })}><Plus size={15} /> Add option</button></div>
-            )}
-          </div>
-        ) : (
-          <>
-            <div className="field full">
-              <label htmlFor="qmodel">Model answer (shown to students after the quiz)</label>
-              <textarea id="qmodel" className="textarea" value={form.modelAnswer} onChange={set('modelAnswer')} />
+        <div className="field full">
+          <span className="label">Options (select the correct one)</span>
+          {form.options.map((option, i) => (
+            <div className="option-edit" key={i}>
+              <input type="radio" name="correct" checked={form.correctIndex === i} onChange={() => setForm({ ...form, correctIndex: i })} aria-label={`Option ${i + 1} is correct`} />
+              <input className="input" value={option} placeholder={`Option ${i + 1}`} onChange={(e) => setOption(i, e.target.value)} />
+              {form.options.length > 2 && <button type="button" className="icon-btn" aria-label="Remove option" onClick={() => removeOption(i)}><Trash2 size={16} /></button>}
             </div>
-            <div className="field full">
-              <label htmlFor="qkeys">Keywords for automatic marking (comma separated)</label>
-              <input id="qkeys" className="input" value={form.keywords} onChange={set('keywords')} placeholder="pointer, dynamic, insertion" />
-              <span className="small muted">Marks = share of keywords found in the answer. You can adjust marks later on the Reviews page.</span>
-            </div>
-          </>
-        )}
+          ))}
+          {form.options.length < MAX_OPTIONS && (
+            <div><button type="button" className="btn btn-soft btn-sm" onClick={() => setForm({ ...form, options: [...form.options, ''] })}><Plus size={15} /> Add option</button></div>
+          )}
+        </div>
 
         <div className="field full">
           <label htmlFor="qexp">Explanation (optional)</label>

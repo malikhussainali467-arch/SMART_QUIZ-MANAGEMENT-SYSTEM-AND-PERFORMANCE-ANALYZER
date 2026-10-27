@@ -13,36 +13,27 @@ export async function presentAttempt(attempt, { reveal }) {
 
       const shown = {
         id: q._id,
-        type: q.type,
+        type: 'mcq',
         text: q.text,
         marks: q.marks,
         difficulty: q.difficulty,
         topic: q.topic?.name || '',
         topicId: q.topic?._id,
-        options: q.type === 'mcq' ? item.optionOrder.map((i) => ({ index: i, text: q.options[i] })) : [],
+        options: (q.options || []).map((text, i) => ({ index: i, text })),
       };
       if (!reveal) return shown;
 
       const answer = answerById.get(String(q._id));
-      const written = (answer?.text || '').toLowerCase();
       return {
         ...shown,
         correctIndex: q.correctIndex,
         explanation: q.explanation,
-        modelAnswer: q.modelAnswer,
-        keywords: q.keywords,
-        matchedKeywords: q.keywords.filter((k) => written.includes(k)),
         answer: answer
-          ? { selected: answer.selected, text: answer.text, marks: answer.marks, isCorrect: answer.isCorrect, reviewed: answer.reviewed }
+          ? { selected: answer.selected, marks: answer.marks, isCorrect: answer.isCorrect }
           : null,
       };
     })
     .filter(Boolean);
-
-  const remainingSeconds =
-    attempt.status === 'in_progress' && attempt.expiresAt
-      ? Math.max(0, Math.round((attempt.expiresAt.getTime() - Date.now()) / 1000))
-      : null;
 
   return {
     attempt: {
@@ -53,15 +44,15 @@ export async function presentAttempt(attempt, { reveal }) {
       passPercent: attempt.passPercent,
       startedAt: attempt.startedAt,
       submittedAt: attempt.submittedAt,
-      timedOut: attempt.timedOut,
+      timedOut: false,
       score: attempt.score,
       totalMarks: attempt.totalMarks,
       percentage: attempt.percentage,
-      pendingReview: attempt.pendingReview,
-      student: attempt.user?.name || null, // only filled when the user was populated
-      timed: Boolean(attempt.expiresAt),
+      pendingReview: false,
+      student: attempt.user?.name || null,
+      timed: false,
     },
-    remainingSeconds,
+    remainingSeconds: null,
     questions: items,
   };
 }

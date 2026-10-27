@@ -12,7 +12,7 @@ import { DIFFICULTY_LABEL, DIFFICULTY_TONE } from '../../utils/format.js';
 export default function QuestionsPage() {
   const toast = useToast();
   const subjects = useFetch(() => api.get('/subjects'), []);
-  const [filters, setFilters] = useState({ subject: '', topic: '', type: '', difficulty: '', search: '' });
+  const [filters, setFilters] = useState({ subject: '', topic: '', difficulty: '', search: '' });
   const [editing, setEditing] = useState(null); // null | 'new' | question
 
   const query = new URLSearchParams(Object.entries(filters).filter(([, v]) => v)).toString();
@@ -35,7 +35,7 @@ export default function QuestionsPage() {
 
   return (
     <>
-      <PageHeader title="Question bank" subtitle="All questions in one place. Quizzes pick from here.">
+      <PageHeader title="Question bank" subtitle="All MCQ questions in one place. Quizzes pick from here.">
         <button className="btn btn-primary" disabled={!subjects.data?.some((s) => s.topics.length)} onClick={() => setEditing('new')}><Plus size={18} /> New question</button>
       </PageHeader>
 
@@ -52,9 +52,6 @@ export default function QuestionsPage() {
           <option value="">All topics</option>
           {topicsOfSubject.map((t) => <option key={t._id} value={t._id}>{t.name}</option>)}
         </select>
-        <select className="select" style={{ width: 'auto' }} aria-label="Type" value={filters.type} onChange={setFilter('type')}>
-          <option value="">All types</option><option value="mcq">Multiple choice</option><option value="theory">Written</option>
-        </select>
         <select className="select" style={{ width: 'auto' }} aria-label="Difficulty" value={filters.difficulty} onChange={setFilter('difficulty')}>
           <option value="">Any difficulty</option><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option>
         </select>
@@ -67,12 +64,11 @@ export default function QuestionsPage() {
           ) : (
             <div className="card table-wrap">
               <table className="table">
-                <thead><tr><th>Question</th><th>Type</th><th>Topic</th><th>Level</th><th>Marks</th><th /></tr></thead>
+                <thead><tr><th>Question</th><th>Topic</th><th>Level</th><th>Marks</th><th /></tr></thead>
                 <tbody>
                   {list.map((q) => (
                     <tr key={q._id}>
                       <td><div className="q-line" title={q.text}>{q.text}</div></td>
-                      <td><span className={`badge ${q.type === 'mcq' ? 'badge-muted' : ''}`}>{q.type === 'mcq' ? 'MCQ' : 'Written'}</span></td>
                       <td><span className="small muted">{q.subject?.name}</span><div>{q.topic?.name}</div></td>
                       <td><span className={`badge badge-${DIFFICULTY_TONE[q.difficulty]}`}>{DIFFICULTY_LABEL[q.difficulty]}</span></td>
                       <td className="num">{q.marks}</td>

@@ -29,7 +29,7 @@ router.post('/subjects/:subjectId/topics', teacher, catalog.createTopic);
 router.put('/topics/:id', teacher, catalog.updateTopic);
 router.delete('/topics/:id', teacher, catalog.deleteTopic);
 
-// Question bank
+// Question bank (MCQ only)
 router.get('/questions', teacher, questions.listQuestions);
 router.post('/questions', teacher, questions.createQuestion);
 router.put('/questions/:id', teacher, questions.updateQuestion);
@@ -44,19 +44,11 @@ router.delete('/quizzes/:id', teacher, quizzes.deleteQuiz);
 
 // Attempts
 router.post('/attempts/start', student, attempts.startQuiz);
-router.post('/attempts/practice', student, attempts.startPractice);
 router.get('/attempts/mine', student, attempts.myAttempts);
-router.get('/attempts/reviews/pending', teacher, attempts.pendingReviews);
 router.get('/attempts/:id', attempts.getAttempt);
 router.post('/attempts/:id/submit', student, attempts.submitAttempt);
-router.put('/attempts/:id/review', teacher, attempts.reviewAttempt);
 
-// Analytics
-router.get('/analytics/me', student, analytics.myReport);
-router.get('/analytics/overview', teacher, analytics.classOverview);
-router.get('/analytics/students', teacher, analytics.studentsList);
-router.get('/analytics/students/:id', teacher, analytics.studentReport);
+// Analytics (Basic teacher quiz report)
 router.get('/analytics/quizzes/:id', teacher, analytics.quizReport);
-router.get('/leaderboard', analytics.leaderboard);
 
 export default router;
