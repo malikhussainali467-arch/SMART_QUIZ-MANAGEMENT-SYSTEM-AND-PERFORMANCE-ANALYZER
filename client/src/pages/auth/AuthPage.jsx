@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { GraduationCap } from 'lucide-react';
+import { GraduationCap, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { homeFor } from '../../components/RouteGuards.jsx';
 
@@ -16,6 +16,7 @@ export default function AuthPage({ mode }) {
   const { login, register } = useAuth();
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: '', email: '', password: '', role: 'student', teacherCode: '' });
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
 
@@ -93,7 +94,26 @@ export default function AuthPage({ mode }) {
           </div>
           <div className="field">
             <label htmlFor="password">Password</label>
-            <input id="password" type="password" className="input" value={form.password} onChange={set('password')} required minLength={6} autoComplete={isLogin ? 'current-password' : 'new-password'} />
+            <div className="password-wrap">
+              <input
+                id="password"
+                type={showPassword ? 'text' : 'password'}
+                className="input"
+                value={form.password}
+                onChange={set('password')}
+                required
+                minLength={6}
+                autoComplete={isLogin ? 'current-password' : 'new-password'}
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+              </button>
+            </div>
           </div>
           
 

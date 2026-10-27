@@ -75,6 +75,14 @@
 .search { position: relative; }
 .search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--ink-faint); pointer-events: none; }
 .search .input { padding-left: 38px; }
+.password-wrap { position: relative; display: flex; align-items: center; }
+.password-wrap .input { padding-right: 42px; }
+.password-toggle {
+  position: absolute; right: 10px; background: none; border: none; cursor: pointer;
+  display: grid; place-items: center; padding: 4px; border-radius: 6px;
+  color: var(--ink-soft); transition: color 0.2s;
+}
+.password-toggle:hover { color: var(--ink); }
 
 /* ---------- Tables ---------- */
 .table-wrap { overflow-x: auto; }
