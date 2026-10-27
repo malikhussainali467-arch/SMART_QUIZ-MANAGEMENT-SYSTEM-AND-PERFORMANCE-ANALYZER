@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { GraduationCap, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { homeFor } from '../../components/RouteGuards.jsx';
+import booksImage from '../../assets/books.jpg';
 
 const DEMOS = [
   { label: 'Try as student', email: 'student@quiz.com', password: 'student123' },
@@ -37,7 +38,16 @@ export default function AuthPage({ mode }) {
 
   return (
     <div className="auth">
-      <section className="auth-hero">
+      <section
+        className="auth-hero"
+        style={{
+          backgroundImage: `linear-gradient(135deg, rgba(35, 22, 14, 0.75) 0%, rgba(35, 22, 14, 0.45) 50%, rgba(35, 22, 14, 0.2) 100%), url(${booksImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center right',
+          backgroundRepeat: 'no-repeat',
+          backgroundColor: '#3e271a',
+        }}
+      >
         <div className="brand">
           <span className="brand-mark"><GraduationCap size={22} /></span>
           Smart Quiz
@@ -45,23 +55,7 @@ export default function AuthPage({ mode }) {
 
         <div>
           <h1>Know exactly what to study next.</h1>
-          <p>Take timed quizzes, see which topics are holding you back, and get practice built around your own mistakes.</p>
-        </div>
-
-        <div className="hero-cards" aria-hidden="true">
-          <div className="hero-card" style={{ left: 0, top: 10, '--tilt': '-3deg' }}>
-            <small>Trees</small>
-            Needs work · 38%
-            <div className="meter"><i style={{ width: '38%' }} /></div>
-          </div>
-          <div className="hero-card" style={{ left: '34%', top: 70, animationDelay: '-2s', '--tilt': '2deg' }}>
-            <small>Quiz score</small>
-            86% · Passed
-          </div>
-          <div className="hero-card" style={{ left: '8%', top: 150, animationDelay: '-4s', '--tilt': '1deg' }}>
-            <small>Streak</small>
-            4 days in a row
-          </div>
+          <p>Take quizzes, test your knowledge across topics, and track your performance.</p>
         </div>
       </section>
 
@@ -111,7 +105,7 @@ export default function AuthPage({ mode }) {
                 onClick={() => setShowPassword((prev) => !prev)}
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
-                {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+               np {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
               </button>
             </div>
           </div>
