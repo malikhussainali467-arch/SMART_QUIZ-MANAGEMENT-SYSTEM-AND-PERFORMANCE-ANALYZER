@@ -21,8 +21,6 @@ export const listQuizzes = asyncHandler(async (req, res) => {
         questions: undefined,
         poolSize: qCount,
         size: qCount,
-        durationMinutes: 0,
-        maxAttempts: 0,
       };
       if (isTeacher) return { ...base, attemptCount: own.length };
 
@@ -53,11 +51,6 @@ export const createQuiz = asyncHandler(async (req, res) => {
   validate(data);
   res.status(201).json(await Quiz.create({
     ...data,
-    durationMinutes: 0,
-    maxAttempts: 0,
-    questionCount: 0,
-    shuffleQuestions: false,
-    shuffleOptions: false,
     createdBy: req.user._id,
   }));
 });

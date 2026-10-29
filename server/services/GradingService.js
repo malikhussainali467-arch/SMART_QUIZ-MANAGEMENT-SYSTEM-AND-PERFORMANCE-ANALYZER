@@ -40,6 +40,5 @@ export class GradingService {
     attempt.score = round(attempt.answers.reduce((sum, a) => sum + a.marks, 0), 2);
     attempt.totalMarks = round(attempt.answers.reduce((sum, a) => sum + a.maxMarks, 0), 2);
     attempt.percentage = attempt.totalMarks ? round((attempt.score / attempt.totalMarks) * 100) : 0;
-    attempt.pendingReview = false;
   }
 }

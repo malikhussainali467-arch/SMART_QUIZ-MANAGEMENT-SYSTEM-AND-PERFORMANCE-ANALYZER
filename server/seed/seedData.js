@@ -48,11 +48,6 @@ async function createContent(teacher) {
       description: data.description,
       subject: subject._id,
       questions: questions.map((q) => q._id),
-      questionCount: 0,
-      durationMinutes: 0,
-      maxAttempts: 0,
-      shuffleQuestions: false,
-      shuffleOptions: false,
       isPublished: data.published,
       createdBy: teacher._id,
     });

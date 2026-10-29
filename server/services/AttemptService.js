@@ -15,7 +15,6 @@ export class AttemptService {
     const now = new Date();
     attempt.status = 'submitted';
     attempt.submittedAt = now;
-    attempt.timedOut = false;
     return attempt.save();
   }
 
@@ -34,12 +33,10 @@ export class AttemptService {
 
     return Attempt.create({
       user: user._id,
-      kind: 'quiz',
       quiz: quiz._id,
       title: quiz.title,
       passPercent: quiz.passPercent,
       items,
-      expiresAt: null,
     });
   }
 }

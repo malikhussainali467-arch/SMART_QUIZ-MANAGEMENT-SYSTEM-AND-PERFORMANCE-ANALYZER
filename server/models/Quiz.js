@@ -34,29 +34,9 @@ Quiz.init(
       type: DataTypes.JSON,
       defaultValue: [],
     },
-    questionCount: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    },
-    durationMinutes: {
-      type: DataTypes.INTEGER,
-      defaultValue: 15,
-    },
-    shuffleQuestions: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true,
-    },
-    shuffleOptions: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true,
-    },
     passPercent: {
       type: DataTypes.INTEGER,
       defaultValue: 50,
-    },
-    maxAttempts: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
     },
     isPublished: {
       type: DataTypes.BOOLEAN,

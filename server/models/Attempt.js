@@ -15,10 +15,6 @@ Attempt.init(
       type: DataTypes.UUID,
       allowNull: false,
     },
-    kind: {
-      type: DataTypes.ENUM('quiz', 'practice'),
-      defaultValue: 'quiz',
-    },
     quizId: {
       type: DataTypes.UUID,
       allowNull: true,
@@ -48,19 +44,10 @@ Attempt.init(
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,
     },
-    expiresAt: {
-      type: DataTypes.DATE,
-      allowNull: true,
-      defaultValue: null,
-    },
     submittedAt: {
       type: DataTypes.DATE,
       allowNull: true,
       defaultValue: null,
-    },
-    timedOut: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
     },
     score: {
       type: DataTypes.FLOAT,
@@ -73,10 +60,6 @@ Attempt.init(
     percentage: {
       type: DataTypes.FLOAT,
       defaultValue: 0,
-    },
-    pendingReview: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: false,
     },
   },
   {

@@ -40,14 +40,11 @@ export const myAttempts = asyncHandler(async (req, res) => {
     attempts.map((a) => ({
       id: a._id,
       title: a.title,
-      kind: a.kind,
       score: a.score,
       totalMarks: a.totalMarks,
       percentage: a.percentage,
       passPercent: a.passPercent,
       submittedAt: a.submittedAt,
-      timedOut: false,
-      pendingReview: false,
     }))
   );
 });

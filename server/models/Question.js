@@ -2,7 +2,7 @@ import { DataTypes } from 'sequelize';
 import { sequelize } from '../config/db.js';
 import { BaseModel } from './BaseModel.js';
 
-export const QUESTION_TYPES = ['mcq', 'theory'];
+export const QUESTION_TYPES = ['mcq'];
 export const DIFFICULTIES = ['easy', 'medium', 'hard'];
 
 export class Question extends BaseModel {}
@@ -58,17 +58,6 @@ Question.init(
       type: DataTypes.INTEGER,
       defaultValue: 0,
     },
-    modelAnswer: {
-      type: DataTypes.TEXT,
-      defaultValue: '',
-      set(val) {
-        this.setDataValue('modelAnswer', String(val || '').trim());
-      },
-    },
-    keywords: {
-      type: DataTypes.JSON,
-      defaultValue: [],
-    },
     createdById: {
       type: DataTypes.UUID,
       allowNull: true,
@@ -81,21 +70,17 @@ Question.init(
     timestamps: true,
     hooks: {
       beforeValidate(inst) {
-        if (inst.type === 'mcq') {
-          inst.options = (inst.options || []).map((o) => String(o).trim()).filter(Boolean);
-          if (inst.options.length < 2) {
-            throw new Error('An MCQ needs at least 2 options');
-          }
-          if (inst.correctIndex < 0 || inst.correctIndex >= inst.options.length) {
-            throw new Error('Correct answer must be one of the options');
-          }
-        } else {
-          inst.keywords = (inst.keywords || []).map((k) => String(k).trim().toLowerCase()).filter(Boolean);
+        inst.type = 'mcq';
+        inst.options = (inst.options || []).map((o) => String(o).trim()).filter(Boolean);
+        if (inst.options.length < 2) {
+          throw new Error('An MCQ needs at least 2 options');
+        }
+        if (inst.correctIndex < 0 || inst.correctIndex >= inst.options.length) {
+          throw new Error('Correct answer must be one of the options');
         }
       },
       beforeSave(inst) {
         if (inst.options) inst.changed('options', true);
-        if (inst.keywords) inst.changed('keywords', true);
       },
     },
   }
