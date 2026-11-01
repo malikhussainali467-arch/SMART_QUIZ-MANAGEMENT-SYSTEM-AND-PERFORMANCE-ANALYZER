@@ -25,7 +25,7 @@ To start fresh: stop the app and delete the `data/quiz.sqlite` file (or run `npm
 
 ## Features (Mids Version)
 
-**Student:**
+**Student & Visitors:**
 - Register and login (student role)
 - Browse published quizzes
 - Take untimed quizzes with question navigator, flagging, and keyboard shortcuts
@@ -33,6 +33,7 @@ To start fresh: stop the app and delete the `data/quiz.sqlite` file (or run `npm
 - Automatic MCQ grading
 - Detailed result page (percentage, score, correct answers, explanations)
 - Student attempt history
+- Contact Us form (open to visitors and students, auto-fills name and email when logged in)
 
 **Teacher:**
 - Register and login (teacher role)
@@ -40,6 +41,7 @@ To start fresh: stop the app and delete the `data/quiz.sqlite` file (or run `npm
 - Question bank with MCQ questions only (difficulty, marks, search, filters)
 - Quiz builder (title, description, subject, pick questions, pass mark, publish switch)
 - Basic teacher view of quiz results (attempt list with scores and dates)
+- Messages management (view Contact Us messages, status filtering, mark as resolved, delete)
 
 ## Project structure
 

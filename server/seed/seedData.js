@@ -1,4 +1,4 @@
-// Fills an EMPTY database with demo users, content and realistic attempt history,
+// Fills an EMPTY database with demo users, content, attempt history, and contact messages,
 // so every screen has something to show on day one.
 import { User } from '../models/User.js';
 import { Subject } from '../models/Subject.js';
@@ -6,6 +6,7 @@ import { Topic } from '../models/Topic.js';
 import { Question } from '../models/Question.js';
 import { Quiz } from '../models/Quiz.js';
 import { Attempt } from '../models/Attempt.js';
+import { ContactMessage } from '../models/ContactMessage.js';
 import { GradingService } from '../services/GradingService.js';
 import { QuizBuilderService } from '../services/QuizBuilderService.js';
 import { DAY_MS, shuffle } from '../utils/helpers.js';
@@ -93,6 +94,35 @@ async function createHistory(students) {
   }
 }
 
+async function createContactMessages(students) {
+  await ContactMessage.create({
+    userId: students[0]._id,
+    name: students[0].name,
+    email: students[0].email,
+    subject: 'Question about a quiz',
+    message: 'Hello teacher, could you explain question 3 regarding binary search trees in the DSA quiz? Thank you!',
+    status: 'new',
+  });
+
+  await ContactMessage.create({
+    userId: null,
+    name: 'Sarah Jenkins',
+    email: 'sarah.j@example.com',
+    subject: 'Suggestion',
+    message: 'It would be wonderful to have additional practice questions on computer networks and OSI layers!',
+    status: 'new',
+  });
+
+  await ContactMessage.create({
+    userId: students[1]._id,
+    name: students[1].name,
+    email: students[1].email,
+    subject: 'Report a problem',
+    message: 'I noticed a small typo in one of the SQL transaction question options. Thanks for checking!',
+    status: 'resolved',
+  });
+}
+
 export async function seedDemoData() {
   if ((await User.countDocuments()) > 0) return; // only seed an empty database
 
@@ -100,6 +130,7 @@ export async function seedDemoData() {
   const { teacher, students } = await createUsers();
   await createContent(teacher);
   await createHistory(students);
+  await createContactMessages(students);
 
   console.log('Demo logins ->  teacher@quiz.com / teacher123   |   student@quiz.com / student123');
 }

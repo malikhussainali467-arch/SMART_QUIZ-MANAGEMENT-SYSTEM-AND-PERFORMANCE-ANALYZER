@@ -1,12 +1,12 @@
 import { Model, Op } from 'sequelize';
 
-export function translateFilter(filter) {
+export function translateFilter(filter, model) {
   if (!filter || Object.keys(filter).length === 0) return {};
   const where = {};
   for (const [key, val] of Object.entries(filter)) {
     let targetKey = key;
     if (key === '_id') targetKey = 'id';
-    else if (key === 'subject') targetKey = 'subjectId';
+    else if (key === 'subject' && model?.name !== 'ContactMessage') targetKey = 'subjectId';
     else if (key === 'topic') targetKey = 'topicId';
     else if (key === 'user') targetKey = 'userId';
     else if (key === 'quiz') targetKey = 'quizId';
@@ -32,12 +32,15 @@ export function translateFilter(filter) {
   return where;
 }
 
-export function translateSort(sortCriteria) {
+export function translateSort(sortCriteria, model) {
   if (!sortCriteria) return undefined;
   if (Array.isArray(sortCriteria)) return sortCriteria;
   const order = [];
   for (const [field, dir] of Object.entries(sortCriteria)) {
-    const col = field === '_id' ? 'id' : field;
+    let col = field === '_id' ? 'id' : field;
+    if (model?.rawAttributes?.[col]?.field) {
+      col = model.rawAttributes[col].field;
+    }
     order.push([col, dir === -1 || dir === 'desc' || dir === 'DESC' ? 'DESC' : 'ASC']);
   }
   return order;
@@ -69,8 +72,8 @@ export class Query {
   }
 
   async execute() {
-    const where = translateFilter(this.filter);
-    const order = translateSort(this.sortCriteria);
+    const where = translateFilter(this.filter, this.model);
+    const order = translateSort(this.sortCriteria, this.model);
     const options = { where };
     if (order) options.order = order;
 
@@ -152,14 +155,14 @@ export class Query {
 
 export class BaseModel extends Model {
   constructor(values, options) {
-    super(BaseModel.sanitize(values), options);
+    super(new.target.sanitize ? new.target.sanitize(values) : BaseModel.sanitize(values), options);
   }
 
   static sanitize(values) {
     if (!values || typeof values !== 'object') return values;
     const val = { ...values };
     if (val._id && !val.id) val.id = val._id;
-    if (val.subject !== undefined && val.subjectId === undefined) {
+    if (this.name !== 'ContactMessage' && val.subject !== undefined && val.subjectId === undefined) {
       val.subjectId = val.subject && typeof val.subject === 'object' ? val.subject.id || val.subject._id : val.subject;
       delete val.subject;
     }
@@ -233,12 +236,12 @@ export class BaseModel extends Model {
   }
 
   static async countDocuments(filter = {}) {
-    const where = translateFilter(filter);
+    const where = translateFilter(filter, this);
     return Model.count.call(this, { where });
   }
 
   static async deleteMany(filter = {}) {
-    const where = translateFilter(filter);
+    const where = translateFilter(filter, this);
     return Model.destroy.call(this, { where });
   }
 

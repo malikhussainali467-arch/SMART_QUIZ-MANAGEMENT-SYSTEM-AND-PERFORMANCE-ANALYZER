@@ -4,6 +4,7 @@ import { Topic } from './Topic.js';
 import { Question } from './Question.js';
 import { Quiz } from './Quiz.js';
 import { Attempt } from './Attempt.js';
+import { ContactMessage } from './ContactMessage.js';
 import { sequelize } from '../config/db.js';
 
 let associationsInitialized = false;
@@ -43,6 +44,10 @@ export function initAssociations() {
   // Quiz <-> Attempt
   Quiz.hasMany(Attempt, { foreignKey: 'quizId', as: 'attempts', onDelete: 'SET NULL' });
   Attempt.belongsTo(Quiz, { foreignKey: 'quizId', as: 'quiz' });
+
+  // User <-> ContactMessage
+  User.hasMany(ContactMessage, { foreignKey: 'userId', as: 'contactMessages', onDelete: 'SET NULL' });
+  ContactMessage.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 }
 
-export { User, Subject, Topic, Question, Quiz, Attempt, sequelize };
+export { User, Subject, Topic, Question, Quiz, Attempt, ContactMessage, sequelize };

@@ -130,6 +130,10 @@ export default function AuthPage({ mode }) {
             {isLogin ? 'New here? ' : 'Already have an account? '}
             <Link to={isLogin ? '/register' : '/login'}>{isLogin ? 'Create an account' : 'Log in'}</Link>
           </p>
+
+          <p className="muted small center" style={{ marginTop: -8 }}>
+            Have a question or feedback? <Link to="/contact">Contact us</Link>
+          </p>
         </form>
       </section>
     </div>

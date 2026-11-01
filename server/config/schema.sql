@@ -105,6 +105,22 @@ CREATE TABLE IF NOT EXISTS `attempts` (
 );
 
 -- ------------------------------------------------------------
+-- 7. CONTACT MESSAGES TABLE
+-- Contact Us submissions from visitors and students.
+-- ------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `contact_messages` (
+  `id` VARCHAR(36) PRIMARY KEY,
+  `user_id` VARCHAR(36) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  `name` VARCHAR(255) NOT NULL,
+  `email` VARCHAR(255) NOT NULL,
+  `subject` VARCHAR(255) NOT NULL,
+  `message` TEXT NOT NULL,
+  `status` VARCHAR(20) NOT NULL DEFAULT 'new' CHECK (`status` IN ('new', 'resolved')),
+  `created_at` DATETIME NOT NULL,
+  `updated_at` DATETIME NOT NULL
+);
+
+-- ------------------------------------------------------------
 -- INDEXES FOR FAST QUERIES & FOREIGN KEY PERFORMANCE
 -- ------------------------------------------------------------
 CREATE INDEX IF NOT EXISTS `idx_topics_subjectId` ON `topics` (`subjectId`);
@@ -113,3 +129,5 @@ CREATE INDEX IF NOT EXISTS `idx_questions_topicId` ON `questions` (`topicId`);
 CREATE INDEX IF NOT EXISTS `idx_quizzes_subjectId` ON `quizzes` (`subjectId`);
 CREATE INDEX IF NOT EXISTS `idx_attempts_userId` ON `attempts` (`userId`);
 CREATE INDEX IF NOT EXISTS `idx_attempts_quizId` ON `attempts` (`quizId`);
+CREATE INDEX IF NOT EXISTS `idx_contact_messages_user_id` ON `contact_messages` (`user_id`);
+CREATE INDEX IF NOT EXISTS `idx_contact_messages_status` ON `contact_messages` (`status`);

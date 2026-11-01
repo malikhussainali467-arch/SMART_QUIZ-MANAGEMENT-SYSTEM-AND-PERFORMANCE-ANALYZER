@@ -25,8 +25,24 @@ export const authenticate = asyncHandler(async (req, res, next) => {
   next();
 });
 
+/** Optional auth: reads token if present, but does not reject if missing or expired. */
+export const optionalAuthenticate = asyncHandler(async (req, res, next) => {
+  const header = req.headers.authorization || '';
+  const token = header.startsWith('Bearer ') ? header.slice(7) : null;
+  if (!token) return next();
+
+  try {
+    const payload = jwt.verify(token, env.jwtSecret);
+    const user = await User.findById(payload.id);
+    if (user) req.user = user;
+  } catch {
+    // Ignore invalid/expired token on optional authentication routes
+  }
+  next();
+});
+
 /** Role gate: requireRole('teacher') lets only teachers through. */
 export const requireRole = (...roles) => (req, res, next) => {
-  if (!roles.includes(req.user.role)) return next(new HttpError(403, 'You do not have access to this'));
+  if (!req.user || !roles.includes(req.user.role)) return next(new HttpError(403, 'You do not have access to this'));
   next();
 };

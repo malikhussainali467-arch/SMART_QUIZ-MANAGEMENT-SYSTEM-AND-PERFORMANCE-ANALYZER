@@ -69,3 +69,6 @@
 .role-switch button.active { background: var(--surface); color: var(--accent); box-shadow: var(--shadow); }
 .demo-box { display: grid; gap: 8px; padding: 14px; border-radius: 13px; border: 1.5px dashed var(--line); }
 @media (max-width: 900px) { .auth { grid-template-columns: 1fr; } .auth-hero { display: none; } }
+.public-shell { min-height: 100vh; display: flex; flex-direction: column; background: var(--canvas); }
+.public-header { display: flex; align-items: center; justify-content: space-between; padding: 18px clamp(16px, 4vw, 40px); background: var(--surface); border-bottom: 1px solid var(--line); }
+.public-content { flex: 1; padding: 36px 20px 60px; }

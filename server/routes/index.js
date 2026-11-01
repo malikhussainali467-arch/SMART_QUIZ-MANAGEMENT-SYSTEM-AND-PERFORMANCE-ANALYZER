@@ -1,12 +1,13 @@
 // Every API URL in one readable place. "teacher" routes are protected by requireRole.
 import { Router } from 'express';
-import { authenticate, requireRole } from '../middleware/auth.js';
+import { authenticate, optionalAuthenticate, requireRole } from '../middleware/auth.js';
 import * as auth from '../controllers/authController.js';
 import * as catalog from '../controllers/catalogController.js';
 import * as questions from '../controllers/questionController.js';
 import * as quizzes from '../controllers/quizController.js';
 import * as attempts from '../controllers/attemptController.js';
 import * as analytics from '../controllers/analyticsController.js';
+import * as contact from '../controllers/contactController.js';
 
 const router = Router();
 const teacher = requireRole('teacher');
@@ -16,6 +17,9 @@ const student = requireRole('student');
 router.post('/auth/register', auth.register);
 router.post('/auth/login', auth.login);
 router.get('/auth/me', authenticate, auth.me);
+
+// Contact Us (Public: visible to everyone, optional auth if logged in)
+router.post('/contact', optionalAuthenticate, contact.sendMessage);
 
 // Everything below needs a logged-in user
 router.use(authenticate);
@@ -50,5 +54,11 @@ router.post('/attempts/:id/submit', student, attempts.submitAttempt);
 
 // Analytics (Basic teacher quiz report)
 router.get('/analytics/quizzes/:id', teacher, analytics.quizReport);
+
+// Contact messages management (Teacher only)
+router.get('/contact/messages', teacher, contact.listMessages);
+router.get('/contact/messages/count', teacher, contact.countNewMessages);
+router.put('/contact/messages/:id/status', teacher, contact.updateStatus);
+router.delete('/contact/messages/:id', teacher, contact.deleteMessage);
 
 export default router;
