@@ -1,6 +1,6 @@
-// Contact Us messages: submission by anyone, management by teachers.
+// Contact Us messages: submission by anyone.
 import { ContactMessage } from '../models/ContactMessage.js';
-import { HttpError, asyncHandler, ensureFound } from '../utils/helpers.js';
+import { HttpError, asyncHandler } from '../utils/helpers.js';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export const ALLOWED_SUBJECTS = [
@@ -63,59 +63,4 @@ export const sendMessage = asyncHandler(async (req, res) => {
     message: 'Thanks, we received your message.',
     id: contactMessage._id,
   });
-});
-
-/** Teacher only: List all messages, newest first. */
-export const listMessages = asyncHandler(async (req, res) => {
-  const messages = await ContactMessage.find()
-    .sort({ createdAt: -1 })
-    .populate('user', 'name email role');
-
-  res.json(
-    messages.map((m) => ({
-      id: m.id,
-      userId: m.userId,
-      user_id: m.userId,
-      name: m.name,
-      email: m.email,
-      subject: m.subject,
-      message: m.message,
-      status: m.status,
-      createdAt: m.createdAt,
-      created_at: m.createdAt,
-      user: m.user ? { id: m.user.id, name: m.user.name, email: m.user.email, role: m.user.role } : null,
-    }))
-  );
-});
-
-/** Teacher only: Get count of new/unresolved messages for badges. */
-export const countNewMessages = asyncHandler(async (req, res) => {
-  const count = await ContactMessage.countDocuments({ status: 'new' });
-  res.json({ count });
-});
-
-/** Teacher only: Update message status (e.g., mark as 'resolved' or 'new'). */
-export const updateStatus = asyncHandler(async (req, res) => {
-  const message = ensureFound(await ContactMessage.findById(req.params.id), 'Message');
-  const targetStatus = String(req.body.status || 'resolved').toLowerCase();
-
-  if (!['new', 'resolved'].includes(targetStatus)) {
-    throw new HttpError(400, 'Invalid status. Must be "new" or "resolved"');
-  }
-
-  message.status = targetStatus;
-  await message.save();
-
-  res.json({
-    ok: true,
-    message: `Message marked as ${targetStatus}`,
-    status: message.status,
-  });
-});
-
-/** Teacher only: Delete message. */
-export const deleteMessage = asyncHandler(async (req, res) => {
-  const message = ensureFound(await ContactMessage.findById(req.params.id), 'Message');
-  await message.deleteOne();
-  res.json({ ok: true, message: 'Message deleted successfully' });
 });

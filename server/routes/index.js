@@ -55,10 +55,4 @@ router.post('/attempts/:id/submit', student, attempts.submitAttempt);
 // Analytics (Basic teacher quiz report)
 router.get('/analytics/quizzes/:id', teacher, analytics.quizReport);
 
-// Contact messages management (Teacher only)
-router.get('/contact/messages', teacher, contact.listMessages);
-router.get('/contact/messages/count', teacher, contact.countNewMessages);
-router.put('/contact/messages/:id/status', teacher, contact.updateStatus);
-router.delete('/contact/messages/:id', teacher, contact.deleteMessage);
-
 export default router;

@@ -9,13 +9,10 @@ import {
   Layers,
   LayoutDashboard,
   LogOut,
-  Mail,
   Menu,
   MessageSquare,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext.jsx';
-import { useFetch } from '../hooks/useFetch.js';
-import { api } from '../api/client.js';
 import { initials } from '../utils/format.js';
 
 const STUDENT_NAV = [
@@ -29,8 +26,6 @@ const TEACHER_NAV = [
   { to: '/teacher/quizzes', label: 'Quizzes', icon: ClipboardList },
   { to: '/teacher/subjects', label: 'Subjects & topics', icon: Layers },
   { to: '/teacher/questions', label: 'Question bank', icon: CircleHelp },
-  { to: '/teacher/messages', label: 'Messages', icon: Mail, badge: true },
-  { to: '/contact', label: 'Contact us', icon: MessageSquare },
 ];
 
 /** Sidebar + top bar shared by every logged-in page. */
@@ -40,12 +35,6 @@ export default function Layout({ children }) {
   const [open, setOpen] = useState(false);
   const isTeacher = user?.role === 'teacher';
   const nav = isTeacher ? TEACHER_NAV : STUDENT_NAV;
-
-  // New message count for teacher's sidebar badge (refreshed on navigation)
-  const newMessages = useFetch(
-    () => (isTeacher ? api.get('/contact/messages/count') : Promise.resolve({ count: 0 })),
-    [isTeacher, location.pathname]
-  );
 
   useEffect(() => setOpen(false), [location.pathname]); // close the mobile menu after navigating
 
@@ -63,13 +52,10 @@ export default function Layout({ children }) {
         </div>
 
         <nav className="nav">
-          {nav.map(({ to, label, icon: Icon, end, badge }) => (
+          {nav.map(({ to, label, icon: Icon, end }) => (
             <NavLink key={to} to={to} end={end} className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
               <Icon size={20} />
               {label}
-              {badge && newMessages.data?.count > 0 && (
-                <span className="nav-count">{newMessages.data.count}</span>
-              )}
             </NavLink>
           ))}
         </nav>

@@ -15,7 +15,6 @@ import SubjectsPage from './pages/teacher/SubjectsPage.jsx';
 import QuestionsPage from './pages/teacher/QuestionsPage.jsx';
 import QuizzesPage from './pages/teacher/QuizzesPage.jsx';
 import QuizAnalyticsPage from './pages/teacher/QuizAnalyticsPage.jsx';
-import MessagesPage from './pages/teacher/MessagesPage.jsx';
 
 /** Contact route: renders inside app Layout if logged in, or with public shell if guest */
 function ContactRoute() {
@@ -82,7 +81,6 @@ export default function App() {
             <Route path="/teacher/quizzes/:id" element={<QuizAnalyticsPage />} />
             <Route path="/teacher/subjects" element={<SubjectsPage />} />
             <Route path="/teacher/questions" element={<QuestionsPage />} />
-            <Route path="/teacher/messages" element={<MessagesPage />} />
           </Route>
         </Route>
       </Route>
