@@ -62,7 +62,7 @@
 .hero-card .meter { height: 7px; width: 150px; border-radius: 9px; background: rgba(255, 255, 255, 0.25); margin-top: 8px; overflow: hidden; }
 .hero-card .meter i { display: block; height: 100%; border-radius: 9px; background: #fff; }
 .auth-panel { display: grid; place-items: center; padding: 32px 24px; }
-.auth-form { width: min(420px, 100%); display: grid; gap: 18px; animation: pop 0.5s var(--ease); }
+.auth-form { width: min(460px, 100%); display: grid; gap: 18px; animation: pop 0.5s var(--ease); }
 .auth-form h2 { font-size: 1.9rem; }
 .role-switch { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; padding: 5px; border-radius: 13px; background: var(--surface-2); border: 1px solid var(--line); }
 .role-switch button { padding: 9px; border: none; border-radius: 9px; background: transparent; font-weight: 600; color: var(--ink-soft); cursor: pointer; transition: all 0.2s; }
