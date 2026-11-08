@@ -38,7 +38,7 @@ function ContactRoute() {
         </Link>
         <div className="row" style={{ gap: 10 }}>
           <Link to="/login" className="btn btn-ghost btn-sm">Log in</Link>
-          <Link to="/register" className="btn btn-primary btn-sm">Create account</Link>
+          <Link to="/register" className="btn btn-primary btn-sm">Sign Up</Link>
         </div>
       </header>
       <main className="public-content">

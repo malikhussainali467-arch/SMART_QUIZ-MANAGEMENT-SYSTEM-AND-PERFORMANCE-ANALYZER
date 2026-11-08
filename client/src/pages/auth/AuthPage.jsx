@@ -202,7 +202,7 @@ export default function AuthPage({ mode }) {
       <section className="auth-panel">
         <form className="auth-form" onSubmit={handleSubmit} noValidate>
           <div>
-            <h2>{isLogin ? 'Welcome back' : 'Create your account'}</h2>
+            <h2>{isLogin ? 'Welcome back' : 'Sign Up'}</h2>
             <p className="muted" style={{ marginTop: 6 }}>{isLogin ? 'Log in to continue.' : 'It takes less than a minute.'}</p>
           </div>
 
@@ -355,7 +355,7 @@ export default function AuthPage({ mode }) {
           {error && <div className="notice notice-bad" role="alert">{error}</div>}
 
           <button className="btn btn-primary btn-block" disabled={busy}>
-            {busy ? 'Please wait…' : isLogin ? 'Log in' : 'Create account'}
+            {busy ? 'Please wait…' : isLogin ? 'Log in' : 'Sign Up'}
           </button>
 
           {isLogin && (
@@ -371,7 +371,7 @@ export default function AuthPage({ mode }) {
 
           <p className="muted small center">
             {isLogin ? 'New here? ' : 'Already have an account? '}
-            <Link to={isLogin ? '/register' : '/login'}>{isLogin ? 'Create an account' : 'Log in'}</Link>
+            <Link to={isLogin ? '/register' : '/login'}>{isLogin ? 'Sign Up' : 'Log in'}</Link>
           </p>
 
           <p className="muted small center" style={{ marginTop: -8 }}>
